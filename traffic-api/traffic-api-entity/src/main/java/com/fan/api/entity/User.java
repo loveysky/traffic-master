@@ -8,8 +8,8 @@ public class User {
   private String upass;
   private String umail;
   private String uphone;
-  private String desc;
-  private String desc2;
+  private String t1;
+  private String t2;
 
 
   public long getUid() {
@@ -66,21 +66,19 @@ public class User {
   }
 
 
-  public String getDesc() {
-    return desc;
+  public String getT1() {
+    return t1;
   }
 
-  public void setDesc(String desc) {
-    this.desc = desc;
+  public void setT1(String t1) {
+    this.t1 = t1;
   }
 
-
-  public String getDesc2() {
-    return desc2;
+  public String getT2() {
+    return t2;
   }
 
-  public void setDesc2(String desc2) {
-    this.desc2 = desc2;
+  public void setT2(String t2) {
+    this.t2 = t2;
   }
-
 }

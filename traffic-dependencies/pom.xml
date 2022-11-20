@@ -17,6 +17,14 @@
 
     <packaging>pom</packaging>
 
+    <modules>
+        <module>../traffic-system</module>
+        <module>../traffic-api</module>
+        <module>../traffic-customer</module>
+        <module>../traffic-storage</module>
+
+    </modules>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

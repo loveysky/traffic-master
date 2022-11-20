@@ -6,7 +6,7 @@ public class Role {
   private long rid;
   private String rname;
   private String rtype;
-  private String rdesc;
+  private String t1;
 
 
   public long getRid() {
@@ -36,12 +36,11 @@ public class Role {
   }
 
 
-  public String getRdesc() {
-    return rdesc;
+  public String getT1() {
+    return t1;
   }
 
-  public void setRdesc(String rdesc) {
-    this.rdesc = rdesc;
+  public void setT1(String t1) {
+    this.t1 = t1;
   }
-
 }

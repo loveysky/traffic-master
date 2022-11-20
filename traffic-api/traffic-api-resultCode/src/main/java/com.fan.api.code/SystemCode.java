@@ -13,14 +13,19 @@ public interface SystemCode {
      */
 
     //用户管理		10000 - 10999
+    String SYSTEM_USER_ERROR_ADD_FAIL = "10000"; //用户添加失败
+    String SYSTEM_USER_ERROR_ADD_FAIL_PARAM_NULL = "10001"; //请求参数为空
+    String SYSTEM_USER_ERROR_ADD_FAIL_NAME_NULL = "10002";  //用户名为空
+    String SYSTEM_USER_ERROR_ADD_FAIL_NAME_SIZE = "10003";  //用户名长度不对
 
-    int SYSTEM_USER_ERROR_ADD_FAIL = 10000; //用户添加失败
-    int SYSTEM_USER_INFO_ADD = 10500;   //用户添加成功
+
+    String SYSTEM_USER_INFO_ADD = "10500";   //用户添加成功
+
 
 
     //角色管理		11000 - 11999
 
-    int SYSTEM_ROLE_ERROR_ADD_FAIL = 11000; //角色添加失败
+    String SYSTEM_ROLE_ERROR_ADD_FAIL = "11000"; //角色添加失败
 
     //权限管理		12000 - 12999
 

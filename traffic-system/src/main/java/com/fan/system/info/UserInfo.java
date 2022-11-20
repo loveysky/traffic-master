@@ -1,9 +1,11 @@
 package com.fan.system.info;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 
 
 /**
@@ -12,19 +14,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UserInfo {
+@TableName("t_user")
+public class UserInfo implements Serializable {
 
 
   private long uid;
-
   private String uname;
   private String uaccount;
   private String upass;
   private String umail;
   private String uphone;
-  private String desc;
-  private String desc2;
-
+  private String t1;
+  private String t2;
 
   public long getUid() {
     return uid;
@@ -34,7 +35,6 @@ public class UserInfo {
     this.uid = uid;
   }
 
-
   public String getUname() {
     return uname;
   }
@@ -42,7 +42,6 @@ public class UserInfo {
   public void setUname(String uname) {
     this.uname = uname;
   }
-
 
   public String getUaccount() {
     return uaccount;
@@ -52,7 +51,6 @@ public class UserInfo {
     this.uaccount = uaccount;
   }
 
-
   public String getUpass() {
     return upass;
   }
@@ -60,7 +58,6 @@ public class UserInfo {
   public void setUpass(String upass) {
     this.upass = upass;
   }
-
 
   public String getUmail() {
     return umail;
@@ -70,7 +67,6 @@ public class UserInfo {
     this.umail = umail;
   }
 
-
   public String getUphone() {
     return uphone;
   }
@@ -79,22 +75,20 @@ public class UserInfo {
     this.uphone = uphone;
   }
 
-
-  public String getDesc() {
-    return desc;
+  public String getT1() {
+    return t1;
   }
 
-  public void setDesc(String desc) {
-    this.desc = desc;
+  public void setT1(String t1) {
+    this.t1 = t1;
   }
 
-
-  public String getDesc2() {
-    return desc2;
+  public String getT2() {
+    return t2;
   }
 
-  public void setDesc2(String desc2) {
-    this.desc2 = desc2;
+  public void setT2(String t2) {
+    this.t2 = t2;
   }
 
 }

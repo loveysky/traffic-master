@@ -1,6 +1,7 @@
 package com.fan.system.controller;
 
 
+import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.fan.api.code.SystemCode;
 import com.fan.api.commons.SystemUtils;
 import com.fan.api.commons.ResponseResult;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * @date: 2022/11/19 - 11 - 19 - 20:01
  * @version: 1.0
@@ -24,9 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     //哪个类打印的日志
-    final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    final int NAME_MINI_LENGTH = 3; //用户名最小长度
+    private final int NAME_MINI_LENGTH = 3; //用户名最小长度
 
     @Autowired
     UserService userService;
@@ -38,8 +41,8 @@ public class UserController {
      * result为true 插入成功
      */
     @RequestMapping(value = "/addUser", method = RequestMethod.POST)
-    public ResponseResult addUser(UserInfo userInfo){
-        ResponseResult responseResult;
+    public ResponseResult addUser(UserInfo userInfo) {
+        logger.info("addUser start");
         //参数为空
         if(SystemUtils.isNull(userInfo)){
             logger.error("system user addUser userInfo is null");
@@ -57,15 +60,77 @@ public class UserController {
         }
         //密码加密
         userInfo.setUpass(DigestUtils.md5DigestAsHex(userInfo.getUpass().getBytes()));
+        //初始化用户状态为正常
+        userInfo.setUtype(0);
 
         boolean result = userService.addUser(userInfo);
 
         if(result){
+            logger.info("system user add success");
             return ResponseResult.buildResponseResult();
         }else {
+            logger.error("system user add error");
             return ResponseResult.buildResponseResult(SystemCode.SYSTEM_USER_ERROR_ADD_FAIL);
         }
     }
 
 
+    /**
+     * 删除用户请求
+     * @return 是否成功
+     * @param uid uid = "1" 删除一个;   uid = "1,2,3" 删除多个
+     */
+    @RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
+    public ResponseResult deleteUser(String uid){
+        ResponseResult responseResult;
+        //传的参数为空
+        if(SystemUtils.isNullOrEmpty(uid)){
+            logger.error("system user delete uid is null");
+            return ResponseResult.buildResponseResult(SystemCode.SYSTEM_USER_ERROR_DELETE_FAIL_UID_NULL, "id为空");
+        }
+        boolean result = userService.deleteUser(uid);
+        if(result){
+            logger.info("system user delete success");
+            responseResult = ResponseResult.buildResponseResult(SystemCode.TRAFFIC_SYSTEM_SUCCESS,"删除成功");
+        }else {
+            logger.error("system user delete error");
+            responseResult = ResponseResult.buildResponseResult(SystemCode.TRAFFIC_SYSTEM_ERROR, "删除失败");
+        }
+        return responseResult;
+    }
+
+    /**
+     * 修改用户信息
+     * @param userInfo user实体信息
+     * @return 修改成功或失败
+     */
+    @RequestMapping(value = "/updateUser", method = RequestMethod.POST)
+    public ResponseResult updateUser(UserInfo userInfo){
+        ResponseResult responseResult;
+        String uid = userInfo.getUid();
+        //没有uid，或者uid为0
+        if(SystemUtils.isNullOrEmpty(uid) || Integer.parseInt(uid) == 0){
+            logger.error("system user update uid is null or uid = 0");
+            return ResponseResult.buildResponseResult(SystemCode.SYSTEM_USER_ERROR_UPDATE_FAIL_UID_NULL, "id为空");
+        }
+        boolean result = userService.updateUserById(userInfo);
+        if(result){
+            logger.info("system user update success");
+            responseResult = ResponseResult.buildResponseResult(SystemCode.TRAFFIC_SYSTEM_SUCCESS,"修改成功");
+        }else {
+            logger.error("system user update error");
+            responseResult = ResponseResult.buildResponseResult(SystemCode.TRAFFIC_SYSTEM_ERROR, "修改失败");
+        }
+        return responseResult;
+    }
+
+    /**
+     * 查询所有用户
+     * @return 查询到的所有用户列表
+     */
+    @RequestMapping(value = "/getUserAll")
+    public ResponseResult getUserAll(){
+        List<UserInfo> userAll = userService.getUserAll();
+        return ResponseResult.buildResponseResult(SystemCode.TRAFFIC_SYSTEM_SUCCESS,"查询成功",userAll);
+    }
 }

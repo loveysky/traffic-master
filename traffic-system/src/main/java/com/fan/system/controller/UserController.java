@@ -1,6 +1,7 @@
 package com.fan.system.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.fan.api.code.SystemCode;
 import com.fan.api.commons.SystemUtils;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -131,6 +133,34 @@ public class UserController {
     @RequestMapping(value = "/getUserAll")
     public ResponseResult getUserAll(){
         List<UserInfo> userAll = userService.getUserAll();
+        if(SystemUtils.isNull(userAll)){
+            logger.error("system user 查询结果为空");
+            return ResponseResult.buildResponseResult(SystemCode.SYSTEM_USER_ERROR_GET_FILE_RESULT_NULL,"查询结果为空");
+        }
         return ResponseResult.buildResponseResult(SystemCode.TRAFFIC_SYSTEM_SUCCESS,"查询成功",userAll);
+
+    }
+
+    /**
+     * 根据姓名或者手机号查询
+     * @return 根据条件查询到的所有用户列表
+     */
+    @RequestMapping(value = "/getUserByWhere")
+    public ResponseResult getUserByWhere(String string){
+        logger.info("system user getUserByWhere start");
+        //判断不为空
+        if(SystemUtils.isNullOrEmpty(string)){
+            logger.error("system user getUserByWhere param is null");
+            return ResponseResult.buildResponseResult(SystemCode.SYSTEM_USER_ERROR_GET_FAIL_PARAM_NULL,"请求参数为空");
+        }
+        //查询
+        logger.info("system user getUserByWhere userService start");
+        UserInfo user =  userService.getUserByWhere(string);
+        if(SystemUtils.isNull(user)){
+            logger.error("system user getUserByWhere user is null");
+            return ResponseResult.buildResponseResult(SystemCode.SYSTEM_USER_ERROR_GET_FILE_RESULT_NULL,"查询结果为空");
+        }
+        logger.info("system user getUserByWhere end and success");
+        return ResponseResult.buildResponseResult(SystemCode.TRAFFIC_SYSTEM_SUCCESS,"查询成功",user);
     }
 }

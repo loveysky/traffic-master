@@ -40,4 +40,11 @@ public interface UserService extends IService<UserInfo> {
      * @return 所有用户
      */
     List<UserInfo> getUserAll();
+
+    /**
+     * 根据姓名或者手机号查询
+     * @param string string
+     * @return 根据条件查询到的所有用户列表
+     */
+    UserInfo getUserByWhere(String string);
 }

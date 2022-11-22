@@ -1,5 +1,6 @@
 package com.fan.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fan.api.commons.ResponseResult;
 import com.fan.api.commons.SystemUtils;
@@ -9,6 +10,7 @@ import com.fan.system.service.UserService;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +91,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserInfo> implement
         }
         //判断密码
         if(!SystemUtils.isNullOrEmpty(userInfo.getUpass())){
-            user.setUpass(userInfo.getUpass());
+            //密码加密
+            userInfo.setUpass(DigestUtils.md5DigestAsHex(userInfo.getUpass().getBytes()));
         }
         //判断邮箱
         if(!SystemUtils.isNullOrEmpty(userInfo.getUmail())){
@@ -111,5 +114,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserInfo> implement
     @Override
     public List<UserInfo> getUserAll(){
         return this.list();
+    }
+
+    /**
+     * 根据姓名或者手机号查询
+     * @param userInfo user
+     * @return 根据条件查询到的所有用户列表
+     */
+    @Override
+    public UserInfo getUserByWhere(String string){
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper();
+        //查询条件判断
+        if(string.length() == 11){  //手机号
+            queryWrapper.eq("uphone", string);
+        }else {
+            //姓名
+            queryWrapper.eq("uname", string);
+        }
+        UserInfo userInfo = this.getOne(queryWrapper);
+        return userInfo;
     }
 }

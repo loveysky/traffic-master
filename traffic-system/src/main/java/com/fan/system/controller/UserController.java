@@ -1,6 +1,8 @@
 package com.fan.system.controller;
 
 
+import cn.hutool.core.util.StrUtil;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.fan.api.code.SystemCode;
@@ -13,16 +15,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
  * @date: 2022/11/19 - 11 - 19 - 20:01
  * @version: 1.0
+ * 用户管理模块
  */
 @RestController
 @RequestMapping("/user")
@@ -61,7 +61,9 @@ public class UserController {
             return ResponseResult.buildResponseResult(SystemCode.SYSTEM_USER_ERROR_ADD_FAIL_NAME_SIZE, "用户名长度不合法");
         }
         //密码加密
+
         userInfo.setUpass(DigestUtils.md5DigestAsHex(userInfo.getUpass().getBytes()));
+
         //初始化用户状态为正常
         userInfo.setUtype(0);
 
@@ -109,7 +111,7 @@ public class UserController {
     @RequestMapping(value = "/updateUser", method = RequestMethod.POST)
     public ResponseResult updateUser(UserInfo userInfo){
         ResponseResult responseResult;
-        String uid = userInfo.getUid();
+        String uid = userInfo.getUid()+"";
         //没有uid，或者uid为0
         if(SystemUtils.isNullOrEmpty(uid) || Integer.parseInt(uid) == 0){
             logger.error("system user update uid is null or uid = 0");
@@ -159,8 +161,41 @@ public class UserController {
         if(SystemUtils.isNull(user)){
             logger.error("system user getUserByWhere user is null");
             return ResponseResult.buildResponseResult(SystemCode.SYSTEM_USER_ERROR_GET_FILE_RESULT_NULL,"查询结果为空");
+
         }
         logger.info("system user getUserByWhere end and success");
         return ResponseResult.buildResponseResult(SystemCode.TRAFFIC_SYSTEM_SUCCESS,"查询成功",user);
+    }
+
+    /**
+     * 登录接口
+     * @param userInfo 用户实体
+     * @return
+     * RequestBody注解可以把前端传过来的json转化成java对象
+     */
+    @RequestMapping(value = "/userLogin" ,method = RequestMethod.POST)
+    public ResponseResult userLogin(@RequestBody UserInfo userInfo){
+        if(userInfo == null){
+            logger.error("system user userLogin get param is null");
+            return ResponseResult.buildResponseResult(SystemCode.SYSTEM_ERROR_AUTHENTICATION_PARAM_NULL, "请求参数为空");
+        }
+
+        //利用hutool工具类 检验是否为空
+        if(StrUtil.isBlank(userInfo.getUaccount())){
+            logger.error("user login account is null");
+            return ResponseResult.buildResponseResult(SystemCode.SYSTEM_ERROR_AUTHENTICATION_USERNAME_NULL, "用户名或密码为空");
+        }
+        if(StrUtil.isBlank(userInfo.getUpass())){
+            logger.error("user login password is null");
+            return ResponseResult.buildResponseResult(SystemCode.SYSTEM_ERROR_AUTHENTICATION_USERPASS_NULL, "用户名或密码为空");
+        }
+        UserInfo u = userService.login(userInfo);
+
+        if(SystemUtils.isNull(u)){
+            logger.error("system user userLogin select user is null");
+            return ResponseResult.buildResponseResult(SystemCode.SYSTEM_ERROR_AUTHENTICATION_USERPASS_ERROR,"用户名或密码错误");
+        }
+        logger.info("system user userLogin select user end and success");
+        return ResponseResult.buildResponseResult(SystemCode.TRAFFIC_SYSTEM_SUCCESS, "用户登录成功", u);
     }
 }

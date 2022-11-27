@@ -47,4 +47,11 @@ public interface UserService extends IService<UserInfo> {
      * @return 根据条件查询到的所有用户列表
      */
     UserInfo getUserByWhere(String string);
+
+    /**
+     * 登录接口
+     * @param userInfo 用户实体
+     * @return UserInfo
+     */
+    UserInfo login(UserInfo userInfo);
 }

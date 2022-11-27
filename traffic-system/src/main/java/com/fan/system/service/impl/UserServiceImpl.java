@@ -2,11 +2,13 @@ package com.fan.system.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fan.api.code.SystemCode;
 import com.fan.api.commons.ResponseResult;
 import com.fan.api.commons.SystemUtils;
 import com.fan.system.mapper.UserMapper;
 import com.fan.system.info.UserInfo;
 import com.fan.system.service.UserService;
+import com.fan.system.utils.TokenUtils;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import org.springframework.util.DigestUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @date: 2022/11/19 - 11 - 19 - 23:30
@@ -134,4 +137,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserInfo> implement
         UserInfo userInfo = this.getOne(queryWrapper);
         return userInfo;
     }
+
+    /**
+     * 登录
+     * @param userInfo 用户实体
+     * @return UserInfo
+     */
+
+    @Override
+    public UserInfo login(UserInfo userInfo){
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uaccount",userInfo.getUaccount());
+        //加密
+        String pass = DigestUtils.md5DigestAsHex(userInfo.getUpass().getBytes());
+        queryWrapper.eq("upass",pass);
+
+        //查询用户
+        UserInfo one = getOne(queryWrapper);
+
+
+        //如果是正常用户
+        if(one != null && one.getUtype() == 0){
+            //设置token
+            String token = TokenUtils.genToken(one.getUid()+"", one.getUpass());
+            one.setToken(token);
+            //设置身份
+            //查询user-role表，获取当前user的所有role，查询role表，将拥有的所有角色信息封装返回
+            return one;
+        }
+        return null;
+    }
+
 }

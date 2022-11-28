@@ -1,6 +1,9 @@
 package com.fan.system.info;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,8 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@TableName("t_role")
 public class RoleInfo {
 
+  @TableId(value = "rid", type = IdType.AUTO)
   private long rid;
   private String rname;
   private String rtype;

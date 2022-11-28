@@ -7,14 +7,16 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.fan.system.exception.ServiceException;
 import com.fan.system.info.UserInfo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.fan.api.code.SystemCode;
-import com.fan.api.commons.ServiceException;
+
 import com.fan.system.service.impl.UserServiceImpl;
 
 /**
@@ -36,7 +38,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
         // 执行认证
         if (StrUtil.isBlank(token)) {
-            throw new ServiceException(SystemCode.SYSTEM_ERROR_AUTHENTICATION_NO_TOKEN,"无token，请重新登录");
+            throw new ServiceException(SystemCode.SYSTEM_ERROR_AUTHENTICATION_NO_TOKEN, "无token，请重新登录");
         }
         // 获取 token 中的 user id
         String uid;

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fan.api.code.SystemCode;
 import com.fan.api.commons.ResponseResult;
 import com.fan.api.commons.SystemUtils;
+import com.fan.system.info.RoleInfo;
+import com.fan.system.info.UserRoleInfo;
 import com.fan.system.mapper.UserMapper;
 import com.fan.system.info.UserInfo;
 import com.fan.system.service.UserService;
@@ -27,6 +29,11 @@ import java.util.logging.Logger;
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserInfo> implements UserService  {
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    UserRoleServiceImpl userRoleService;
+    @Autowired
+    RoleServiceImpl roleService;
 
     /**
      * 插入用户
@@ -155,14 +162,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserInfo> implement
         //查询用户
         UserInfo one = getOne(queryWrapper);
 
-
-        //如果是正常用户
-        if(one != null && one.getUtype() == 0){
+        //判空
+        if(one != null){
             //设置token
             String token = TokenUtils.genToken(one.getUid()+"", one.getUpass());
             one.setToken(token);
             //设置身份
             //查询user-role表，获取当前user的所有role，查询role表，将拥有的所有角色信息封装返回
+            List<UserRoleInfo> list = userRoleService.getByUid(String.valueOf(one.getUid()));
+            List<RoleInfo> roleInfos = new ArrayList<>();
+            for(int i = 0; i < list.size(); i++){
+                RoleInfo roleInfo = roleService.getById(list.get(i).getRid());
+                roleInfos.add(roleInfo);
+            }
+            one.setRoleInfos(roleInfos);
             return one;
         }
         return null;

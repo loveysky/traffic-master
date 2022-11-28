@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 /**
  * 对接数据库的实体类
@@ -33,7 +35,7 @@ public class UserInfo {
   private String token;
   //判断身份用的表示
   @TableField(exist = false)
-  private String[] roles;
+  private List<RoleInfo> roleInfos;
 
 
   public long getUid() {

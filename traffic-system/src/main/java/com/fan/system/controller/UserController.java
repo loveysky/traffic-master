@@ -49,6 +49,7 @@ public class UserController {
         if(SystemUtils.isNull(userInfo)){
             logger.error("system user addUser userInfo is null");
             return ResponseResult.buildResponseResult(SystemCode.SYSTEM_USER_ERROR_ADD_FAIL_PARAM_NULL, "参数为空");
+
         }
         //用户名为空
         if(SystemUtils.isNullOrEmpty(userInfo.getUaccount())){
@@ -195,7 +196,25 @@ public class UserController {
             logger.error("system user userLogin select user is null");
             return ResponseResult.buildResponseResult(SystemCode.SYSTEM_ERROR_AUTHENTICATION_USERPASS_ERROR,"用户名或密码错误");
         }
-        logger.info("system user userLogin select user end and success");
-        return ResponseResult.buildResponseResult(SystemCode.TRAFFIC_SYSTEM_SUCCESS, "用户登录成功", u);
+        //判断用户类型
+        if(u.getUtype() == 0){      //正常
+            logger.info("system user userLogin select user end and success");
+            return ResponseResult.buildResponseResult(SystemCode.TRAFFIC_SYSTEM_SUCCESS, "用户登录成功", u);
+
+        }else if(u.getUtype() == 1){    //删除
+            logger.error("system user userLogin select user end and success but user is deleted");
+            return ResponseResult.buildResponseResult(SystemCode.SYSTEM_ERROR_AUTHENTICATION_USERTYPE_ERROR, "用户已被注销");
+
+        }else if(u.getUtype() == 2){    //被封号
+            logger.error("system user userLogin select user end and success but user is Sealed");
+            return ResponseResult.buildResponseResult(SystemCode.SYSTEM_ERROR_AUTHENTICATION_USERTYPE_ERROR, "用户已被封号");
+
+        }else if(u.getUtype() == 3){    //用户异常但未被封号
+            logger.error("system user userLogin select user end and success but user is abnormal");
+            return ResponseResult.buildResponseResult(SystemCode.SYSTEM_ERROR_AUTHENTICATION_USERTYPE_ERROR, "用户异常");
+
+        }
+        logger.error("system user userLogin ");
+        return ResponseResult.buildResponseResult(SystemCode.TRAFFIC_SYSTEM_ERROR, "系统异常");
     }
 }
